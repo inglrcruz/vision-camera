@@ -11,15 +11,15 @@ export default function App() {
   const { hasPermission, requestPermission } = useCameraPermission()
   const [isVisible, setIsVisible] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [config, setConfig] = useState<any>({ volume: false, hdr: false, camType: 'back' })
+  const [config, setConfig] = useState<any>({ volume: false, hdr: false, fps: 30, camType: 'back' })
   const device: any = useCameraDevice(config.camType, {})
-  const format = useCameraFormat(device, [{ photoHdr: config.hdr }])
+  const format = useCameraFormat(device, [{ fps: config.fps }, { photoHdr: config.hdr }])
   const camera = useRef<any>(null)
   const [images, setImages] = useState<any[]>([])
 
   useEffect(() => {
     async function getPermission() {
-      if (hasPermission) await requestPermission()
+      if (!hasPermission) await requestPermission()
     }
     getPermission()
   }, [])
@@ -35,7 +35,7 @@ export default function App() {
         setLoading(true)
         const photo = await camera.current.takePhoto({
           qualityPrioritization: 'speed',
-          flash: 'on',
+          flash: 'off',
           enableShutterSound: config.volume
         })
         setImages([...images, { uri: `file://${photo.path}`, original: photo }])
@@ -61,6 +61,7 @@ export default function App() {
 
         {/* Options panel */}
         <OptionsPanel config={config}
+          setFPS={() => setConfig({ ...config, fps: (config.fps === 30) ? 60 : 30 })}
           setHDR={() => setConfig({ ...config, hdr: !config.hdr })}
           switchCam={() => setConfig({ ...config, camType: (config.camType === 'back' ? 'front' : 'back') })}
           setVolume={() => setConfig({ ...config, volume: !config.volume })}
