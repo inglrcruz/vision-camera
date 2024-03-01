@@ -7,7 +7,7 @@ export const PressableST = StyleSheet.create({
     takePhoto: {
         padding: 20,
         alignSelf: 'center',
-        top: "80%"
+        top: "75%"
     },
     takePhotoBtn: {
         backgroundColor: "#e3e1df",
@@ -23,6 +23,27 @@ export const PressableST = StyleSheet.create({
         width: 70,
         height: 70
     },
+    zoomMain: {
+        flexDirection: 'row', 
+        marginBottom: 10, 
+        backgroundColor: "#1e222e", 
+        borderRadius: 50, 
+        width: 90
+    },
+    zoomBtn: {
+        display: 'flex', 
+        width: 30
+    },
+    zoomTxt: {
+        width: 40, 
+        height: 40, 
+        color: "white", 
+        fontWeight: "bold", 
+        borderRadius: 50, 
+        alignSelf: "center", 
+        textAlign: "center", 
+        verticalAlign: 'middle'
+    }
 })
 
 /**
