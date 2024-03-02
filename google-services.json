@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "778742079612",
+    "project_id": "vision-camara",
+    "storage_bucket": "vision-camara.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778742079612:android:13acca27e569d80b4ea9f9",
+        "android_client_info": {
+          "package_name": "com.dodosoft.vision_camera"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSpPc3rLEiLjLsJNCBp9tCSnvj6Qr_iok"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

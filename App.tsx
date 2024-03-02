@@ -1,17 +1,72 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
-import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Camera, useCameraDevice, useCameraFormat, useCameraPermission } from 'react-native-vision-camera'
 import ImageList from './components/image-list';
 import OptionsPanel from './components/options-panel';
 import { ContainerST, PressableST, TextST } from './style';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler'
 import Reanimated, { Extrapolation, interpolate, runOnJS, useAnimatedProps, useSharedValue } from 'react-native-reanimated'
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import { initializeApp } from 'firebase/app';
+import 'firebase/messaging'
+
+// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBSpPc3rLEiLjLsJNCBp9tCSnvj6Qr_iok",
+  authDomain: "com.dodosoft.vision_camera",
+  // databaseURL: 'https://project-id.firebaseio.com',
+  projectId: "vision-camara",
+  storageBucket: "vision-camara.appspot.com",
+  // messagingSenderId: 'sender-id',
+  // appId: 'app-id',
+  // measurementId: 'G-measurement-id',
+};
+
+initializeApp(firebaseConfig)
 
 Reanimated.addWhitelistedNativeProps({
   zoom: true,
 })
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera)
+
+
+
+async function registerForPushNotificationsAsync() {
+  let token: any;
+
+  if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+      });
+  }
+
+  if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+          alert('Failed to get push token for push notification!');
+          return;
+      }
+
+      token = await Notifications.getExpoPushTokenAsync({
+          projectId: "8b075ca4-6929-46db-8e39-3e188c45b100"
+      }).then((done)=>console.log(done)).catch((error)=>console.log(error))
+      
+  } else {
+      alert('Must use physical device for Push Notifications');
+  }
+  return token.data;
+}
+
 
 export default function App() {
 
@@ -26,6 +81,31 @@ export default function App() {
   const [zoomStatus, setZoomStatus] = useState<number>(0)
   const zoom = useSharedValue(device.neutralZoom)
   const zoomOffset = useSharedValue(0);
+  const notificationListener = useRef<any>();
+  const responseListener = useRef<any>();
+
+  useEffect(() => {
+      registerForPushNotificationsAsync().then(token => {
+          console.log(" Token ", token)
+      });
+
+      notificationListener.current = Notifications.addNotificationReceivedListener((notification: any) => {
+          console.log(" Add ", notification)
+      })
+
+      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+          console.log(response.notification);
+      })
+
+      return () => {
+          Notifications.removeNotificationSubscription(notificationListener.current);
+          Notifications.removeNotificationSubscription(responseListener.current);
+      }
+
+  }, []);
+
+
+
 
   useEffect(() => {
     async function getPermission() {
@@ -85,66 +165,68 @@ export default function App() {
   if (hasPermission === false) return <Text style={TextST.noAccess}>Sin acceso a la cámara</Text>
 
   return (
-    <GestureHandlerRootView style={ContainerST.mainView}>
-      <GestureDetector gesture={gesture}>
+    <>
+      <GestureHandlerRootView style={ContainerST.mainView}>
+        <GestureDetector gesture={gesture}>
 
-        {/* Camera */}
-        <ReanimatedCamera ref={camera} style={[StyleSheet.absoluteFill, { flex: 1 }]}
-          enableZoomGesture={true}
-          zoom={zoomStatus}
-          animatedProps={animatedProps}
-          device={device} isActive={true}
-          format={format} photo={true} enableHighQualityPhotos />
-      </GestureDetector>
+          {/* Camera */}
+          <ReanimatedCamera ref={camera} style={[StyleSheet.absoluteFill, { flex: 1 }]}
+            enableZoomGesture={true}
+            zoom={zoomStatus}
+            animatedProps={animatedProps}
+            device={device} isActive={true}
+            format={format} photo={true} enableHighQualityPhotos />
+        </GestureDetector>
 
-      {/* Options panel */}
-      <OptionsPanel config={config}
-        setFPS={() => setConfig({ ...config, fps: (config.fps === 30) ? 60 : 30 })}
-        setHDR={() => setConfig({ ...config, hdr: !config.hdr })}
-        switchCam={() => setConfig({ ...config, camType: (config.camType === 'back' ? 'front' : 'back') })}
-        setVolume={() => setConfig({ ...config, volume: !config.volume })}
-      />
+        {/* Options panel */}
+        <OptionsPanel config={config}
+          setFPS={() => setConfig({ ...config, fps: (config.fps === 30) ? 60 : 30 })}
+          setHDR={() => setConfig({ ...config, hdr: !config.hdr })}
+          switchCam={() => setConfig({ ...config, camType: (config.camType === 'back' ? 'front' : 'back') })}
+          setVolume={() => setConfig({ ...config, volume: !config.volume })}
+        />
 
-      {/* Take photo button */}
-      <View style={PressableST.takePhoto}>
+        {/* Take photo button */}
+        <View style={PressableST.takePhoto}>
 
-        <View style={PressableST.zoomMain}>
-          <Pressable onPress={() => setZoom(1)} style={[PressableST.zoomBtn, { marginLeft: 5 }]}>
-            <Text style={[PressableST.zoomTxt, { backgroundColor: (zoomStatus === 1) ? "#619df3" : "transparent" }]}>1x</Text>
-          </Pressable>
+          <View style={PressableST.zoomMain}>
+            <Pressable onPress={() => setZoom(1)} style={[PressableST.zoomBtn, { marginLeft: 5 }]}>
+              <Text style={[PressableST.zoomTxt, { backgroundColor: (zoomStatus === 1) ? "#619df3" : "transparent" }]}>1x</Text>
+            </Pressable>
 
-          <Pressable onPress={() => setZoom(2)} style={[PressableST.zoomBtn, { marginLeft: 20 }]}>
-            <Text style={[PressableST.zoomTxt, { backgroundColor: (zoomStatus === 2) ? "#619df3" : "transparent" }]}>2x</Text>
+            <Pressable onPress={() => setZoom(2)} style={[PressableST.zoomBtn, { marginLeft: 20 }]}>
+              <Text style={[PressableST.zoomTxt, { backgroundColor: (zoomStatus === 2) ? "#619df3" : "transparent" }]}>2x</Text>
+            </Pressable>
+          </View>
+          <Pressable onPress={takePhoto} style={[PressableST.takePhotoBtn, { backgroundColor: loading ? "red" : "gray" }]} disabled={loading}>
+            <View style={PressableST.takePhotoBall}></View>
           </Pressable>
         </View>
-        <Pressable onPress={takePhoto} style={[PressableST.takePhotoBtn, { backgroundColor: loading ? "red" : "gray" }]} disabled={loading}>
-          <View style={PressableST.takePhotoBall}></View>
-        </Pressable>
-      </View>
 
-      {/* Thumbnail images */}
-      <TouchableOpacity style={ContainerST.miniatureTouch} onPress={() => setIsVisible(true)}>
-        {
-          images.length > 0 &&
-          images.slice(-3).map((row: any, key: number) => (
-            <Image key={key}
-              style={[ContainerST.miniatureImage, {
-                left: [30, 20, 0][key],
-                opacity: [0.8, 0.8, 1][key],
-                rotation: [30, 20, 0][key]
-              }]}
-              placeholder={process.env.EXPO_PUBLIC_BLURHASH}
-              contentFit="cover"
-              transition={1000}
-              source={{ uri: row.uri }}
-            />
-          ))
-        }
-        <Text style={ContainerST.miniatureBall}>{images.length}</Text>
-      </TouchableOpacity>
+        {/* Thumbnail images */}
+        <TouchableOpacity style={ContainerST.miniatureTouch} onPress={() => setIsVisible(true)}>
+          {
+            images.length > 0 &&
+            images.slice(-3).map((row: any, key: number) => (
+              <Image key={key}
+                style={[ContainerST.miniatureImage, {
+                  left: [30, 20, 0][key],
+                  opacity: [0.8, 0.8, 1][key],
+                  rotation: [30, 20, 0][key]
+                }]}
+                placeholder={process.env.EXPO_PUBLIC_BLURHASH}
+                contentFit="cover"
+                transition={1000}
+                source={{ uri: row.uri }}
+              />
+            ))
+          }
+          <Text style={ContainerST.miniatureBall}>{images.length}</Text>
+        </TouchableOpacity>
 
-      {/* Modal, image list */}
-      {isVisible && <ImageList images={images.reverse()} isVisible={isVisible} closeModal={() => setIsVisible(false)} />}
-    </GestureHandlerRootView>
+        {/* Modal, image list */}
+        {isVisible && <ImageList images={images.reverse()} isVisible={isVisible} closeModal={() => setIsVisible(false)} />}
+      </GestureHandlerRootView>
+    </>
   )
 }
