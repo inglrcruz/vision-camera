@@ -11,10 +11,12 @@ const styles = StyleSheet.create({
   },
 
   OptionBTN: {
-    margin: 5,
+    width: 75,
+    height: 55,
     padding: 10,
     alignItems: 'center',
-    borderRadius: 10,
+    justifyContent: 'center',
+    borderRadius: 4,
     backgroundColor: '#4e81ee'
   },
 
@@ -55,13 +57,44 @@ const styles = StyleSheet.create({
     width: 60,
     marginTop: -10
   },
-  blackLine: {
-    backgroundColor: '#000',
+  footer: {
+    position: 'absolute',
+    bottom: 10,
+    width: "100%"
+  },
+  footerLine: {
+    borderBottomColor: "#e5e6ea",
+    borderBottomWidth: 1.5,
     padding: 2,
-    alignSelf: 'center',
+    width: "100%"
+  },
+  footerOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     width: 165,
-    borderRadius: 10,
-    marginTop: 15
+    alignSelf: 'center',
+    marginTop: -20
+  },
+  navOption: {
+    flexDirection: 'row',
+    margin: 20,
+    marginTop: 0,
+    marginBottom: 0,
+    justifyContent: 'space-between',
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#e7e8eb"
+  },
+  mediaOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 20,
+    marginBottom: 15
+  },
+  mediaOptionRight: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    width: 100, 
+    paddingRight: 30
   }
 });
 
@@ -76,69 +109,68 @@ export default function App() {
   return (
     <>
       <View style={{ flex: 1, backgroundColor: '#fafafa' }}>
+
         {/* Top */}
-        <View style={{ flexDirection: 'row', marginTop: 20 }}>
-          {/* LINE */}
-          <View style={[styles.shadow, styles.line]}></View><View>
+        <View style={{ margin: 20, marginBottom: 15 }}>
+          {/* Text */}
+          <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+            <FontAwesome6 size={20} color="#4e81ee" name="arrow-left" style={{ marginTop: 25, marginLeft: 10 }} />
+            <View style={{ marginLeft: 20 }}>
+              <Text style={{ fontWeight: 'bold', color: "#4d5560" }}>Nancy TEST Roofing</Text>
+              <Text style={styles.textSmall}>SE240066</Text>
+              <Text style={styles.textSmall}>123 MAIN ST USAVILLE PA 12345</Text>
+              <Text style={styles.textSmall}>Ready for Production</Text>
+            </View>
+          </View>
 
-            {/* Text */}
-            <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-              <FontAwesome6 size={20} color="#4e81ee" name="arrow-left" style={{ marginTop: 25, marginLeft: 10 }} />
-              <View style={{ marginLeft: 20 }}>
-                <Text style={{ fontWeight: 'bold', color: "#4d5560" }}>Nancy TEST Roofing</Text>
-                <Text style={styles.textSmall}>SE240066</Text>
-                <Text style={styles.textSmall}>123 MAIN ST USAVILLE PA 12345</Text>
-                <Text style={styles.textSmall}>Ready for Production</Text>
+          {/* OPTIONS BTN */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <TouchableOpacity onPress={() => onPress('CONTACT')}>
+              <View style={styles.OptionBTN}>
+                <FontAwesome6 size={15} color="#fff" name="user-large" />
+                <Text style={{ color: '#fff', marginTop: 5, fontSize: 9 }}>CONTACT</Text>
               </View>
-            </View>
-
-            {/* OPTIONS BTN */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <TouchableOpacity onPress={() => onPress('CONTACT')}>
-                <View style={styles.OptionBTN}>
-                  <FontAwesome6 size={15} color="#fff" name="user-large" />
-                  <Text style={{ color: '#fff', marginTop: 5, fontSize: 10 }}>CONTACT</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => onPress('DIRECTIONS')}>
-                <View style={styles.OptionBTN}>
-                  <FontAwesome6 size={15} color="#fff" name="diamond-turn-right" />
-                  <Text style={{ color: '#fff', marginTop: 5, fontSize: 10 }}>DIRECTIONS</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => onPress('CHECK IN')}>
-                <View style={styles.OptionBTN}>
-                  <FontAwesome6 size={15} color="#fff" name="location-dot" />
-                  <Text style={{ color: '#fff', marginTop: 5, fontSize: 10 }}>CHECK IN</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => onPress('CLOSE OUT')}>
-                <View style={styles.OptionBTN}>
-                  <FontAwesome6 size={15} color="#fff" name="check-double" />
-                  <Text style={{ color: '#fff', marginTop: 5, fontSize: 10 }}>CLOSE OUT</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => onPress('DIRECTIONS')}>
+              <View style={styles.OptionBTN}>
+                <FontAwesome6 size={15} color="#fff" name="diamond-turn-right" />
+                <Text style={{ color: '#fff', marginTop: 5, fontSize: 9 }}>DIRECTIONS</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => onPress('CHECK IN')}>
+              <View style={styles.OptionBTN}>
+                <FontAwesome6 size={15} color="#fff" name="location-dot" />
+                <Text style={{ color: '#fff', marginTop: 5, fontSize: 9 }}>CHECK IN</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => onPress('CLOSE OUT')}>
+              <View style={styles.OptionBTN}>
+                <FontAwesome6 size={15} color="#fff" name="check-double" />
+                <Text style={{ color: '#fff', marginTop: 5, fontSize: 10 }}>CLOSE OUT</Text>
+              </View>
+            </TouchableOpacity>
           </View>
 
         </View>
 
         {/* Nav options */}
-        <View style={{ flexDirection: 'row', margin: 10, marginTop: 10, justifyContent: 'space-between', borderBottomWidth: 1.5, borderBottomColor: "#e7e8eb" }}>
+        <View style={styles.navOption}>
           {["Media", "Documents", "Punch list", "Crews"].map((val: string, key: number) =>
             <TouchableOpacity key={key} onPress={() => setTap(val)}>
               <Text style={[styles.tapText, { borderBottomWidth: (tap === val) ? 1.5 : 0 }]}>{val}</Text>
             </TouchableOpacity>)}
         </View>
 
-        <View style={{ borderBottomColor: "#e5e6ea", borderBottomWidth: 1.5, height: "50%", marginBottom: 10 }}>
+        <View style={{ height: "65%" }}>
 
           {/* MEDIA OPTIONS */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
+          <View style={styles.mediaOption}>
             <View>
-              <Text style={{ color: "#555d68", fontSize: 16 }}><FontAwesome6 size={15} color="#555d68" name="images" style={{ marginTop: 5 }} /> {tap}</Text>
+              <Text style={{ color: "#555d68", fontSize: 16 }}>
+                <FontAwesome6 size={15} color="#555d68" name="images" style={{ marginTop: 5 }} /> {tap}
+              </Text>
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: 100, paddingRight: 30 }}>
+            <View style={styles.mediaOptionRight}>
               <TouchableOpacity onPress={() => onPress('Share')}>
                 <FontAwesome6 size={15} color="#4e81ee" name="share-nodes" style={{ marginTop: 5 }} />
               </TouchableOpacity>
@@ -151,9 +183,9 @@ export default function App() {
           {/* IMAGES */}
           {
             tap === "Media" &&
-            <View style={{ flexDirection: 'row', margin: 10 }}>
+            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
               {["", ""].map((val: string, key: number) =>
-                <View key={key} style={{ backgroundColor: 'gray', width: '48%', height: 200, margin: 5, borderRadius: 5 }}>
+                <View key={key} style={{ backgroundColor: 'gray', width: '47%', height: 150, margin: 5, borderRadius: 5 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
                     <TouchableOpacity onPress={() => onPress('Star')}>
                       <FontAwesome6 size={20} color="#e1b63f" name="star" style={{ marginTop: 5 }} />
@@ -174,27 +206,26 @@ export default function App() {
         </View>
 
         {/* FOOTER */}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: 165, alignSelf: 'center', marginTop: -30 }}>
-
-          <TouchableOpacity onPress={() => onPress('Folder')}>
-            <View style={styles.smallBtn}>
-              <FontAwesome6 size={15} color="#fff" name="folder" style={{ marginTop: 5 }} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push({ pathname: "/camara" })}>
-            <View style={styles.bigBtn}>
-              <FontAwesome6 size={20} color="#fff" name="camera" />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => onPress('Pen')}>
-            <View style={styles.smallBtn}>
-              <FontAwesome6 size={15} color="#fff" name="pen" style={{ marginTop: 5 }} />
-            </View>
-          </TouchableOpacity>
+        <View style={styles.footer}>
+          <View style={styles.footerLine}></View>
+          <View style={styles.footerOption}>
+            <TouchableOpacity onPress={() => onPress('Folder')}>
+              <View style={styles.smallBtn}>
+                <FontAwesome6 size={15} color="#fff" name="folder" style={{ marginTop: 5 }} />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push({ pathname: "/camara" })}>
+              <View style={styles.bigBtn}>
+                <FontAwesome6 size={20} color="#fff" name="camera" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => onPress('Pen')}>
+              <View style={styles.smallBtn}>
+                <FontAwesome6 size={15} color="#fff" name="pen" style={{ marginTop: 5 }} />
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-
-        {/* LINE BLACK */}
-        <View style={styles.blackLine}></View>
 
       </View>
     </>

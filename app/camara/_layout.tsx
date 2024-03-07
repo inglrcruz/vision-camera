@@ -1,67 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Image } from 'expo-image'
-import { Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Camera, useCameraDevice, useCameraFormat, useCameraPermission } from 'react-native-vision-camera'
 import ImageList from '../components/image-list';
 import OptionsPanel from '../components/options-panel';
 import { ContainerST, PressableST, TextST } from './style';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler'
 import Reanimated, { Extrapolation, interpolate, runOnJS, useAnimatedProps, useSharedValue } from 'react-native-reanimated'
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
-import { initializeApp } from 'firebase/app';
-import 'firebase/messaging'
-import { Stack } from 'expo-router';
-
-// Initialize Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyBSpPc3rLEiLjLsJNCBp9tCSnvj6Qr_iok",
-  authDomain: "com.dodosoft.vision_camera",
-  projectId: "vision-camara",
-  storageBucket: "vision-camara.appspot.com",
-}
-
-initializeApp(firebaseConfig)
 
 Reanimated.addWhitelistedNativeProps({
   zoom: true,
 })
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera)
-
-async function registerForPushNotificationsAsync() {
-
-  let token: any;
-
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-
-    token = await Notifications.getExpoPushTokenAsync({
-      projectId: "8b075ca4-6929-46db-8e39-3e188c45b100"
-    })
-
-  } else {
-    alert('Must use physical device for Push Notifications');
-  }
-  return token.data;
-}
 
 export default function CameraScreen() {
 
@@ -82,30 +32,6 @@ export default function CameraScreen() {
   const [zoomStatus, setZoomStatus] = useState<number>(0)
   const zoom = useSharedValue(device.neutralZoom)
   const zoomOffset = useSharedValue(0)
-  const notificationListener = useRef<any>()
-  const responseListener = useRef<any>()
-
-  useEffect(() => {
-    registerForPushNotificationsAsync().then(token => {
-      console.log(" Token ", token)
-    });
-
-    notificationListener.current = Notifications.addNotificationReceivedListener((notification: any) => {
-      console.log(" Add ", notification)
-    })
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response.notification);
-    })
-
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
-    }
-  }, [])
-
-
-
 
   useEffect(() => {
     async function getPermission() {
