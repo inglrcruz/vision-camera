@@ -27,6 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>myapp</string>
           <string>com.dodosoft.vision-camera</string>
         </array>
       </dict>
@@ -46,6 +47,10 @@
     <string>$(PRODUCT_NAME) needs access to your Camera.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>$(PRODUCT_NAME) needs access to your Microphone.</string>
+    <key>NSUserActivityTypes</key>
+    <array>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
+    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>
